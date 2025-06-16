@@ -122,7 +122,7 @@ return {
 			write_all_buffers = false,
 			noautocmd = false,
 			lockmarks = false,
-			debounce_delay = 5000,
+			debounce_delay = 3000,
 			debug = false,
 		},
 	},

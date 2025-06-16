@@ -1,51 +1,29 @@
 return {
-	{
+
+	{ -- Linting
 		"mfussenegger/nvim-lint",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			local lint = require("lint")
-
 			lint.linters_by_ft = {
-				javascript = { "eslint_d" },
-				typescript = { "eslint_d" },
-				javascriptreact = { "eslint_d" },
-				typescriptreact = { "eslint_d" },
+				javascript = { "biomejs" },
+				typescript = { "biomejs" },
+				javascriptreact = { "biomejs" },
+				typescriptreact = { "biomejs" },
+				json = { "biomejs" },
+				jsonc = { "biomejs" },
 			}
 
-			-- Auto lint only if an ESLint config is found
-			vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
+			-- Create autocommand which carries out the actual linting
+			-- on the specified events.
+			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+				group = lint_augroup,
 				callback = function()
-					local buf_ft = vim.bo.filetype
-					local eslint_filetypes = {
-						javascript = true,
-						typescript = true,
-						javascriptreact = true,
-						typescriptreact = true,
-					}
-
-					if not eslint_filetypes[buf_ft] then
-						return
-					end
-
-					-- Check for eslint config in project root
-					local config_files = {
-						".eslintrc.js",
-						".eslintrc.cjs",
-						".eslintrc.json",
-						".eslintrc.yaml",
-						".eslintrc.yml",
-						".eslintrc",
-						"package.json",
-					}
-
-					local found = false
-					for _, filename in ipairs(config_files) do
-						if vim.fn.filereadable(vim.fn.getcwd() .. "/" .. filename) == 1 then
-							found = true
-							break
-						end
-					end
-
-					if found then
+					-- Only run the linter in buffers that you can modify in order to
+					-- avoid superfluous noise, notably within the handy LSP pop-ups that
+					-- describe the hovered symbol using Markdown.
+					if vim.opt_local.modifiable:get() then
 						lint.try_lint()
 					end
 				end,

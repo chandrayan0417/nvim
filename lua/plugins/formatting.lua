@@ -5,28 +5,33 @@ return {
 	cmd = { "ConformInfo" },
 	opts = {
 		notify_on_error = false,
-		format_on_save = function(bufnr)
-			local disable_filetypes = { c = true, cpp = true }
-			if disable_filetypes[vim.bo[bufnr].filetype] then
-				return nil
-			else
-				return {
-					timeout_ms = 500,
-					lsp_format = "fallback",
-				}
-			end
-		end,
+		format_on_save = {
+			timeout_ms = 500,
+			lsp_format = "fallback",
+		},
 		formatters_by_ft = {
 			lua = { "stylua" },
-			javascript = { "prettierd" },
-			javascriptreact = { "prettierd" },
-			typescript = { "prettierd" },
-			typescriptreact = { "prettierd" },
-			json = { "prettierd" },
+			javascript = { "biome" },
+			javascriptreact = { "biome" },
+			typescript = { "biome" },
+			typescriptreact = { "biome" },
+			json = { "biome" },
 			html = { "prettierd" },
 			css = { "prettierd" },
 			markdown = { "prettierd" },
 			yaml = { "prettierd" },
+		},
+		formatters = {
+			biome = {
+				command = "biome",
+				args = {
+					"check",
+					"--apply",
+					"--stdin-file-path",
+					"$FILENAME",
+				},
+				stdin = true,
+			},
 		},
 	},
 }
