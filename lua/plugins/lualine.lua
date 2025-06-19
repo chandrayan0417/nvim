@@ -3,10 +3,10 @@ return {
 	opts = function(_, opts)
 		opts.options = {
 			icons_enabled = true,
-			theme = "nightfly",
+			theme = "catppuccin",
+			globalstatus = true, -- Must be true for single line
 			component_separators = "",
 			section_separators = "",
-			globalstatus = true,
 		}
 
 		opts.sections = {
@@ -16,20 +16,21 @@ return {
 					"filename",
 					path = 1, -- 0 = just filename, 1 = relative path, 2 = absolute path
 				},
-				{
-					"diff",
-					symbols = {
-						added = " ", -- Added lines
-						modified = " ", -- Modified lines
-						removed = " ", -- Deleted lines
-					},
-					colored = true,
-				},
+				"diagnostics",
 			},
 			lualine_b = {
 				{
 					"branch",
 					-- icon = "🌿", -- Git branch icon
+				},
+				{
+					"diff",
+					symbols = {
+						added = "+ ", -- Added lines
+						modified = "~ ", -- Modified lines
+						removed = "- ", -- Deleted lines
+					},
+					colored = true,
 				},
 			},
 			lualine_x = { "location" }, -- cursor position
@@ -49,5 +50,6 @@ return {
 			lualine_y = {},
 			lualine_z = {},
 		}
+		opts.laststatus = 0 --vim tpipeline
 	end,
 }
