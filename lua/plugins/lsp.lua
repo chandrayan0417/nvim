@@ -1,40 +1,38 @@
--- plugins/lsp.lua
 return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
+			"saghen/blink.cmp",
 		},
 		config = function()
 			require("mason").setup()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					"ts_ls",
-					"html",
 					"cssls",
 					"jsonls",
-					"emmet_ls",
 					"tailwindcss",
+					"emmet_ls",
+					-- Removed html, emmet_ls
 				},
 			})
 
 			local lspconfig = require("lspconfig")
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 			local servers = {
 				ts_ls = {
-					on_attach = function(client, bufnr)
-						-- ❗ Disable tsserver diagnostics (handled by eslint_d instead)
+					capabilities = capabilities,
+					on_attach = function(client, _)
 						client.handlers["textDocument/publishDiagnostics"] = function() end
 					end,
 				},
-				html = {},
-				cssls = {},
-				jsonls = {},
-				emmet_ls = {
-					filetypes = { "html", "css", "javascriptreact", "typescriptreact" },
-				},
+				cssls = { capabilities = capabilities },
+				jsonls = { capabilities = capabilities },
 				tailwindcss = {
+					capabilities = capabilities,
 					filetypes = {
 						"html",
 						"css",
